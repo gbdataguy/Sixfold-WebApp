@@ -1,5 +1,5 @@
-# Tableau Robot Battler WebApp
+# Tableau Robot Battler WebGL
 
-A standalone browser prototype of the project's recruit-and-battle loop. Open `dist/index.html` or serve `dist/` with any static HTTP server. It uses no build dependencies.
+`dist/` contains a Unity-generated WebGL build of Tableau Robot Battler. Serve it with a static HTTP server; opening `index.html` directly from disk will not load the game data.
 
-The browser simulation is an independent prototype; it does not run the Unity combat engine or connect to the Async PvP service.
+This build was generated September 9, 2026 from the older DominionBazaar project checkout. A fresh build from the current Unity project is pending because the Unity licensing client fails before `BuildPlayer` starts. The WebGL game data is split into three parts and reassembled by the generated page for static hosting.
