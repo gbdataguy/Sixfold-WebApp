@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101725">
+  <meta name="description" content="A browser-playable shop and auto-battle prototype for Tableau Robot Battler.">
+  <title>Tableau Robot Battler</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <div class="brand"><span class="brand-mark">TB</span><span>TABLEAU <b>ROBOT BATTLER</b></span></div>
+      <div class="run-meta"><span id="round-label">ROUND 1</span><span class="divider"></span><span id="wins-label">0 WINS</span><span class="divider"></span><span id="gold-label" class="gold">◆ 12 GOLD</span></div>
+    </header>
+    <main>
+      <div class="page-heading"><div><p class="eyebrow" id="phase-label">PREPARE YOUR LINEUP</p><h1 id="heading">Build your tableau</h1><p class="hint" id="hint">Recruit units, then place them in the six battle slots. Position matters: the front slot attacks first.</p></div><button class="primary" id="battle-button">Start battle <span>→</span></button></div>
+      <section class="arena" aria-label="Battle boards">
+        <div class="board-head"><span>YOUR COMMANDER <small id="player-health">30 / 30 HP</small></span><span class="versus">VS</span><span>OPPONENT <small id="enemy-health">30 / 30 HP</small></span></div>
+        <div class="boards"><div class="board" id="player-board" aria-label="Your slots"></div><div class="board" id="enemy-board" aria-label="Opponent slots"></div></div>
+      </section>
+      <div class="lower"><section class="shop panel"><div class="section-heading"><div><p class="eyebrow">RECRUITMENT</p><h2>Shop offers</h2></div><button class="secondary" id="reroll-button">Reroll · 1 gold</button></div><div class="offers" id="offers"></div></section><section class="log panel"><div class="section-heading"><div><p class="eyebrow">MATCH FEED</p><h2>Battle log</h2></div><span class="log-round" id="log-round">ROUND 1</span></div><ol id="battle-log" aria-live="polite"><li>Recruit units and start a battle to see the action.</li></ol></section></div>
+    </main>
+    <footer>Browser prototype based on the Tableau Robot Battler shop and combat loop. <button id="reset-button">New run</button></footer>
+  </div>
+  <script src="app.js"></script>
+</body>
+</html>
