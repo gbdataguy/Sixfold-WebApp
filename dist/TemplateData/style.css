@@ -15,6 +15,7 @@ body { padding: 0; margin: 0 }
 #unity-fullscreen-button { cursor:pointer; float: right; width: 38px; height: 38px; background: url('fullscreen-button.png') no-repeat center }
 #unity-warning { position: absolute; left: 50%; top: 5%; transform: translate(-50%); background: white; padding: 10px; display: none }
 
+
 /* TableauBattler mobile canvas aspect */
 /* Keep the authored BattleScene aspect ratio on mobile WebGL. The scene is
    360x640 (9:16); cover the browser viewport so wider phones crop vertically

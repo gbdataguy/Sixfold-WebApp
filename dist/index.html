@@ -108,6 +108,26 @@
         canvas.style.height = "600px";
       }
 
+      
+      if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
+        // TableauBattler mobile canvas resize
+        function resizeMobileCanvas() {
+          var referenceAspect = 360 / 640;
+          var viewportWidth = document.documentElement.clientWidth;
+          var viewportHeight = document.documentElement.clientHeight;
+          var canvasWidth = Math.max(viewportWidth, viewportHeight * referenceAspect);
+          var canvasHeight = Math.max(viewportHeight, viewportWidth / referenceAspect);
+          canvas.style.setProperty("position", "absolute", "important");
+          canvas.style.setProperty("left", "50%", "important");
+          canvas.style.setProperty("top", "50%", "important");
+          canvas.style.setProperty("transform", "translate(-50%, -50%)", "important");
+          canvas.style.setProperty("width", canvasWidth + "px", "important");
+          canvas.style.setProperty("height", canvasHeight + "px", "important");
+        }
+        window.addEventListener("resize", resizeMobileCanvas);
+        resizeMobileCanvas();
+      }
+      
       document.querySelector("#unity-loading-bar").style.display = "block";
 
       var script = document.createElement("script");
