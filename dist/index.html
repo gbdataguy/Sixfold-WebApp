@@ -61,7 +61,7 @@
         streamingAssetsUrl: "StreamingAssets",
         companyName: "Sixfold",
         productName: "Sixfold",
-        productVersion: "02704d04fff74db6985bf44b53a8fce5",
+        productVersion: "745ed470849347759fb33e82894168af",
         showBanner: unityShowBanner,
         // errorHandler: function(err, url, line) {
         //    alert("error " + err + " occurred at line " + line);
@@ -109,22 +109,32 @@
       }
 
       
-      if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
+      if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent) ||
+          (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1)) {
         // TableauBattler mobile canvas resize
+        var mobileContainer = document.querySelector("#unity-container");
+        mobileContainer.classList.add("unity-mobile");
+        canvas.classList.add("unity-mobile");
+        config.matchWebGLToCanvasSize = true;
+        var mobileResizeFrame = 0;
         function resizeMobileCanvas() {
-          var referenceAspect = 360 / 640;
-          var viewportWidth = document.documentElement.clientWidth;
-          var viewportHeight = document.documentElement.clientHeight;
-          var canvasWidth = Math.max(viewportWidth, viewportHeight * referenceAspect);
-          var canvasHeight = Math.max(viewportHeight, viewportWidth / referenceAspect);
+          mobileResizeFrame = 0;
+          var viewportWidth = Math.max(1, document.documentElement.clientWidth || window.innerWidth);
+          var viewportHeight = Math.max(1, window.innerHeight || document.documentElement.clientHeight);
+          mobileContainer.style.setProperty("width", viewportWidth + "px", "important");
+          mobileContainer.style.setProperty("height", viewportHeight + "px", "important");
           canvas.style.setProperty("position", "absolute", "important");
-          canvas.style.setProperty("left", "50%", "important");
-          canvas.style.setProperty("top", "50%", "important");
-          canvas.style.setProperty("transform", "translate(-50%, -50%)", "important");
-          canvas.style.setProperty("width", canvasWidth + "px", "important");
-          canvas.style.setProperty("height", canvasHeight + "px", "important");
+          canvas.style.setProperty("left", "0", "important");
+          canvas.style.setProperty("top", "0", "important");
+          canvas.style.setProperty("transform", "none", "important");
+          canvas.style.setProperty("width", "100%", "important");
+          canvas.style.setProperty("height", "100%", "important");
         }
-        window.addEventListener("resize", resizeMobileCanvas);
+        function queueMobileResize() {
+          if (!mobileResizeFrame) mobileResizeFrame = window.requestAnimationFrame(resizeMobileCanvas);
+        }
+        window.addEventListener("resize", queueMobileResize);
+        window.addEventListener("orientationchange", queueMobileResize);
         resizeMobileCanvas();
       }
       
