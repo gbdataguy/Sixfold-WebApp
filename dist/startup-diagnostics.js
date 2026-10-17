@@ -8,6 +8,7 @@
   try { previous = JSON.parse(localStorage.getItem(key)); } catch (_) {}
   var failed = false;
   var button;
+  var dismissed = false;
   function url(value) {
     try { var u = new URL(value, location.href); return u.origin + u.pathname; }
     catch (_) { return '[unknown URL]'; }
@@ -30,10 +31,16 @@
     } catch (_) { /* Diagnostics must never interrupt the game. */ }
   }
   function showButton() {
-    if (button || !document.body) return;
+    if (dismissed || button || !document.body) return;
+    var controls = document.createElement('div');
+    controls.style.cssText = 'position:fixed;bottom:12px;left:12px;z-index:2147483647;display:flex;gap:4px';
     button = document.createElement('button');
     button.textContent = 'Loading error report';
-    button.style.cssText = 'position:fixed;bottom:12px;left:12px;z-index:2147483647;padding:10px;font:14px sans-serif';
+    button.style.cssText = 'padding:10px;font:14px sans-serif';
+    var dismiss = document.createElement('button');
+    dismiss.textContent = 'Dismiss';
+    dismiss.style.cssText = 'padding:10px;font:14px sans-serif';
+    dismiss.onclick = function () { dismissed = true; controls.remove(); };
     button.onclick = function () {
       var panel = document.createElement('div');
       panel.style.cssText = 'position:fixed;inset:10px;z-index:2147483647;background:#fff;color:#111;padding:16px;overflow:auto;font:16px sans-serif';
@@ -55,7 +62,8 @@
       close.textContent = 'Close'; close.onclick = function () { panel.remove(); };
       panel.append(heading, area, copy, close); document.body.appendChild(panel);
     };
-    document.body.appendChild(button);
+    controls.append(button, dismiss);
+    document.body.appendChild(controls);
   }
   var originalFetch = window.fetch;
   if (originalFetch) window.fetch = function (input, options) {
@@ -64,7 +72,7 @@
     var method = String(options && options.method || input && input.method || 'GET');
     return originalFetch.apply(this, arguments).then(function (response) {
       record('fetch', { url: address, method: method, status: response.status,
-        duration: Math.round(performance.now() - start) }, !response.ok);
+        duration: Math.round(performance.now() - start) }, !response.ok && response.status !== 304);
       return response;
     }, function (error) {
       record('fetch-rejected', { url: address, method: method, error: message(error),
