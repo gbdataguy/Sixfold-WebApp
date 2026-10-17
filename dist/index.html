@@ -62,7 +62,7 @@
         streamingAssetsUrl: "StreamingAssets",
         companyName: "Sixfold",
         productName: "Sixfold",
-        productVersion: "8ef3501e58ff47d2acc742d06fe5d95f",
+        productVersion: "4ebba68e877a40038529076e92b2df6e",
         showBanner: unityShowBanner,
         // errorHandler: function(err, url, line) {
         //    alert("error " + err + " occurred at line " + line);
@@ -147,6 +147,7 @@
         createUnityInstance(canvas, config, (progress) => {
           document.querySelector("#unity-progress-bar-full").style.width = 100 * progress + "%";
               }).then((unityInstance) => {
+                  window.sixfoldDiagnostics && window.sixfoldDiagnostics.unityReady();
                 document.querySelector("#unity-loading-bar").style.display = "none";
                 document.querySelector("#unity-fullscreen-button").onclick = () => {
                   unityInstance.SetFullscreen(1);
