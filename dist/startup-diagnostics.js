@@ -12,9 +12,6 @@
     } };
   var previous = null;
   try { previous = JSON.parse(localStorage.getItem(key)); } catch (_) {}
-  var failed = false;
-  var button;
-  var dismissed = false;
   function url(value) {
     try { var u = new URL(value, location.href); return u.origin + u.pathname; }
     catch (_) { return '[unknown URL]'; }
@@ -36,45 +33,8 @@
         report.failures.push(event);
         if (report.failures.length > 20) report.failures.shift();
       }
-      failed = failed || failure;
       save();
-      if (failed) showButton();
     } catch (_) { /* Diagnostics must never interrupt the game. */ }
-  }
-  function showButton() {
-    if (dismissed || button || !document.body) return;
-    var controls = document.createElement('div');
-    controls.style.cssText = 'position:fixed;bottom:12px;left:12px;z-index:2147483647;display:flex;gap:4px';
-    button = document.createElement('button');
-    button.textContent = 'Loading error report';
-    button.style.cssText = 'padding:10px;font:14px sans-serif';
-    var dismiss = document.createElement('button');
-    dismiss.textContent = 'Dismiss';
-    dismiss.style.cssText = 'padding:10px;font:14px sans-serif';
-    dismiss.onclick = function () { dismissed = true; controls.remove(); };
-    button.onclick = function () {
-      var panel = document.createElement('div');
-      panel.style.cssText = 'position:fixed;inset:10px;z-index:2147483647;background:#fff;color:#111;padding:16px;overflow:auto;font:16px sans-serif';
-      var heading = document.createElement('p');
-      heading.textContent = 'Copy this report and send it with your bug report. It stays on this device until you share it.';
-      var area = document.createElement('textarea');
-      area.value = JSON.stringify({ current: report, previous: previous && (previous.current || previous) }, null, 2);
-      area.readOnly = true;
-      area.style.cssText = 'display:block;width:100%;height:65%;font:12px monospace';
-      var copy = document.createElement('button');
-      copy.textContent = 'Copy report';
-      copy.onclick = function () {
-        area.focus(); area.select(); area.setSelectionRange(0, area.value.length);
-        if (navigator.clipboard) navigator.clipboard.writeText(area.value).then(function () {
-          copy.textContent = 'Copied';
-        }, function () { copy.textContent = 'Select and copy the text above'; });
-      };
-      var close = document.createElement('button');
-      close.textContent = 'Close'; close.onclick = function () { panel.remove(); };
-      panel.append(heading, area, copy, close); document.body.appendChild(panel);
-    };
-    controls.append(button, dismiss);
-    document.body.appendChild(controls);
   }
   var originalFetch = window.fetch;
   window.sixfoldDiagnostics = {
@@ -177,9 +137,6 @@
     var version = document.documentElement.innerHTML.match(/productVersion:\s*"([^"]+)"/);
     report.build = version && version[1];
     record('dom-ready', {}, false);
-    if (failed || previous && previous.current && (previous.current.failures && previous.current.failures.length || previous.current.events.some(function (e) {
-      return e.type === 'alert' || e.type === 'fetch-rejected' || e.type === 'unhandledrejection';
-    }))) showButton();
     save();
   });
   record('start', {}, false);
