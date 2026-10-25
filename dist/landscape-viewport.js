@@ -1,4 +1,4 @@
-/* Give every Unity scene the same 16:9 landscape render area. */
+/* Follow portrait viewports and fit landscape scenes to a 16:9 render area. */
 (function () {
   'use strict';
   var container = document.getElementById('unity-container');
@@ -18,11 +18,12 @@
     var mobile = container.classList.contains('unity-mobile');
     var fullscreen = document.fullscreenElement === container || document.webkitFullscreenElement === container;
     var landscape = width > height;
-    if (footer) set(footer, 'display', mobile || fullscreen ? 'none' : 'block');
-    var footerHeight = !mobile && !fullscreen && footer ? footer.offsetHeight : 0;
+    var fillViewport = mobile || fullscreen || !landscape;
+    if (footer) set(footer, 'display', fillViewport ? 'none' : 'block');
+    var footerHeight = !fillViewport && footer ? footer.offsetHeight : 0;
     var availableHeight = Math.max(1, height - footerHeight);
-    var gameWidth = mobile || fullscreen ? width : Math.min(960, width);
-    var gameHeight = mobile || fullscreen ? height : Math.min(600, availableHeight);
+    var gameWidth = fillViewport ? width : Math.min(960, width);
+    var gameHeight = fillViewport ? height : Math.min(600, availableHeight);
     if (landscape) {
       gameWidth = Math.min(gameWidth, availableHeight * 16 / 9);
       gameHeight = gameWidth * 9 / 16;
@@ -42,7 +43,7 @@
     set(canvas, 'width', gameWidth + 'px');
     set(canvas, 'height', gameHeight + 'px');
     if (footer) {
-      set(footer, 'display', mobile || fullscreen ? 'none' : 'block');
+      set(footer, 'display', fillViewport ? 'none' : 'block');
       set(footer, 'position', 'absolute');
       set(footer, 'left', (width - gameWidth) / 2 + 'px');
       set(footer, 'top', (availableHeight + gameHeight) / 2 + 'px');
