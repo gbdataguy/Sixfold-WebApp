@@ -1,7 +1,8 @@
 (function () {
   'use strict';
   var storeKey='sixfold.marketing.v1', endpoint='', busy=false, timer=null, state, session;
-  var allowed=['visit','game_loaded','run_started','battle_completed','run_completed','recipe_created','hall_earned','great_hall_earned'];
+  var onboarding=["login_shown", "guest_clicked", "login_clicked", "register_clicked", "auth_succeeded", "auth_failed", "main_menu_shown", "casual_clicked", "commander_selection_shown", "commander_confirmed", "run_resumed"], marks={};
+  var allowed=['visit','game_loaded','run_started','battle_completed','run_completed','recipe_created','hall_earned','great_hall_earned','login_shown','guest_clicked','login_clicked','register_clicked','auth_succeeded','auth_failed','main_menu_shown','casual_clicked','commander_selection_shown','commander_confirmed','run_resumed'];
   var disabled=navigator.globalPrivacyControl===true || navigator.doNotTrack==='1';
   function uuid(){return crypto.randomUUID().replaceAll('-','');}
   function clean(value){return String(value||'').replace(/[^a-zA-Z0-9_. -]/g,'').slice(0,80);}
@@ -31,14 +32,19 @@
   async function track(name,run,detail){
     if(!allowed.includes(name))return;
     run=String(run||'');detail=clean(detail);
-    if(!['visit','game_loaded'].includes(name) && !/^[a-zA-Z0-9_-]{8,80}$/.test(run))return;
+    if(!onboarding.includes(name) && !['visit','game_loaded'].includes(name) && !/^[a-zA-Z0-9_-]{8,80}$/.test(run))return;
+    var elapsed=null, now=Date.now();
+    var previous={login_shown:'game_loaded',main_menu_shown:'game_loaded',auth_succeeded:'auth_attempt',auth_failed:'auth_attempt',run_resumed:'casual_clicked',commander_selection_shown:'casual_clicked',commander_confirmed:'commander_selection_shown'}[name];
+    if(previous && marks[previous]!=null){elapsed=Math.min(86400000,Math.max(0,now-marks[previous]));delete marks[previous];}
+    if(['guest_clicked','login_clicked','register_clicked'].includes(name))marks.auth_attempt=now;
+    if(['game_loaded','casual_clicked','commander_selection_shown'].includes(name))marks[name]=now;
     var id=uuid();
     // Milestone IDs are deterministic across reloads; actual recipe actions remain distinct.
     if(['run_started','run_completed','battle_completed','hall_earned','great_hall_earned'].includes(name)){
       var bytes=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(state.visitor+'|'+run+'|'+name+'|'+detail));
       id=Array.from(new Uint8Array(bytes),function(x){return x.toString(16).padStart(2,'0');}).join('');
     }
-    if(!state.queue.some(function(e){return e.id===id;}))state.queue.push({id:id,visitor:state.visitor,session:session,event:name,run:run,detail:detail,source:state.source,medium:state.medium,campaign:state.campaign});
+    if(!state.queue.some(function(e){return e.id===id;}))state.queue.push({id:id,visitor:state.visitor,session:session,event:name,run:run,detail:detail,elapsed_ms:elapsed,source:state.source,medium:state.medium,campaign:state.campaign});
     if(state.queue.length>100)state.queue.shift();save();flush();
   }
   var visited=false;
