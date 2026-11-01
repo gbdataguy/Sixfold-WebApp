@@ -4,6 +4,10 @@
   var onboarding=["login_shown", "guest_clicked", "login_clicked", "register_clicked", "auth_succeeded", "auth_failed", "main_menu_shown", "casual_clicked", "commander_selection_shown", "commander_confirmed", "run_resumed"], marks={};
   var allowed=['visit','game_loaded','run_started','battle_completed','run_completed','recipe_created','hall_earned','great_hall_earned','login_shown','guest_clicked','login_clicked','register_clicked','auth_succeeded','auth_failed','main_menu_shown','casual_clicked','commander_selection_shown','commander_confirmed','run_resumed'];
   var disabled=navigator.globalPrivacyControl===true || navigator.doNotTrack==='1';
+  // Use the game host, never the referring page or marketing campaign.
+  var host=String(location.hostname||'').toLowerCase();
+  var platform=['play-sixfold.com','www.play-sixfold.com','sixfold.pages.dev'].includes(host)?'website':
+    (host==='itch.io'||host.endsWith('.itch.io')||host==='itch.zone'||host.endsWith('.itch.zone'))?'itch':'unknown';
   function uuid(){return crypto.randomUUID().replaceAll('-','');}
   function clean(value){return String(value||'').replace(/[^a-zA-Z0-9_. -]/g,'').slice(0,80);}
   try { disabled=disabled || localStorage.getItem('sixfold.analytics.optout')==='1'; } catch (_) {}
@@ -44,7 +48,7 @@
       var bytes=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(state.visitor+'|'+run+'|'+name+'|'+detail));
       id=Array.from(new Uint8Array(bytes),function(x){return x.toString(16).padStart(2,'0');}).join('');
     }
-    if(!state.queue.some(function(e){return e.id===id;}))state.queue.push({id:id,visitor:state.visitor,session:session,event:name,run:run,detail:detail,elapsed_ms:elapsed,source:state.source,medium:state.medium,campaign:state.campaign});
+    if(!state.queue.some(function(e){return e.id===id;}))state.queue.push({id:id,visitor:state.visitor,session:session,event:name,run:run,detail:detail,elapsed_ms:elapsed,platform:platform,source:state.source,medium:state.medium,campaign:state.campaign});
     if(state.queue.length>100)state.queue.shift();save();flush();
   }
   var visited=false;
