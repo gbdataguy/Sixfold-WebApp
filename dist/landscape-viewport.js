@@ -22,8 +22,8 @@
     if (footer) set(footer, 'display', fillViewport ? 'none' : 'block');
     var footerHeight = !fillViewport && footer ? footer.offsetHeight : 0;
     var availableHeight = Math.max(1, height - footerHeight);
-    var gameWidth = fillViewport ? width : Math.min(960, width);
-    var gameHeight = fillViewport ? height : Math.min(600, availableHeight);
+    var gameWidth = width;
+    var gameHeight = availableHeight;
     if (landscape) {
       gameWidth = Math.min(gameWidth, availableHeight * 16 / 9);
       gameHeight = gameWidth * 9 / 16;
