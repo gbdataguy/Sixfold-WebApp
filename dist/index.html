@@ -71,16 +71,17 @@
       }
 
       var buildUrl = "Build";
-      var loaderUrl = buildUrl + "/dist.loader.js";
+      var loaderUrl = buildUrl + "/dist.loader.js?v=f8a4f555a2e44b30b6d44e296c3a3113";
       var config = {
         arguments: [],
-        dataUrl: buildUrl + "/dist.data.unityweb",
-        frameworkUrl: buildUrl + "/dist.framework.js.unityweb",
-        codeUrl: buildUrl + "/dist.wasm.unityweb",
+        dataUrl: buildUrl + "/dist.data.unityweb?v=f8a4f555a2e44b30b6d44e296c3a3113",
+        frameworkUrl: buildUrl + "/dist.framework.js.unityweb?v=f8a4f555a2e44b30b6d44e296c3a3113",
+        codeUrl: buildUrl + "/dist.wasm.unityweb?v=f8a4f555a2e44b30b6d44e296c3a3113",
         streamingAssetsUrl: "StreamingAssets",
         companyName: "Sixfold",
         productName: "Sixfold",
-        productVersion: "2bdfccef7d2d412f987b230fe66b69ce",
+        productVersion: "f8a4f555a2e44b30b6d44e296c3a3113",
+        cacheControl: function () { return "no-store"; },
         showBanner: unityShowBanner,
         // errorHandler: function(err, url, line) {
         //    alert("error " + err + " occurred at line " + line);
